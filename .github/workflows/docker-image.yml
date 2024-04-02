@@ -40,7 +40,7 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          vinlic/step-free-api:${{ steps.tag_name.outputs.tag }}
-          vinlic/step-free-api:latest
+          yangclivia/step-free-api:${{ steps.tag_name.outputs.tag }}
+          yangclivia/step-free-api:latest
         platforms: linux/amd64,linux/arm64
         build-args: TARGETPLATFORM=${{ matrix.platform }}
