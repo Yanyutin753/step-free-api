@@ -35,13 +35,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          tags: |
-            type=raw,value=latest
-            type=ref,event=tag
+      - name: Set tag name
+        id: tag_name
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "::set-output name=tag::${{ github.event.inputs.tag }}"
+          fi
 
       - name: Convert repository name to lowercase
         id: repo-all-name
@@ -58,9 +59,9 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            yangclivia/${{ steps.repo_name.outputs.repo }}:${{ steps.tag_name.outputs.tags }}
+            yangclivia/${{ steps.repo_name.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
             yangclivia/${{ steps.repo_name.outputs.repo }}:latest
-            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:${{ steps.tag_name.outputs.tags }}
+            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
             ghcr.io/${{ steps.repo-all-name.outputs.repo }}:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
