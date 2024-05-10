@@ -50,9 +50,9 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            vinlic/step-free-api:${{ steps.tag_name.outputs.tag }}
-            vinlic/step-free-api:latest
-            ghcr.io/vinlic/step-free-api:${{ steps.tag_name.outputs.tag }}
-            ghcr.io/vinlic/step-free-api:latest
+            yangclivia/step-free-api:${{ steps.tag_name.outputs.tag }}
+            yangclivia/step-free-api:latest
+            ghcr.io/${{ github.repository }}:${{ steps.tag_name.outputs.tag }}
+            ghcr.io/${{ github.repository }}:latest
           platforms: ${{ matrix.platform }}
           build-args: TARGETPLATFORM=${{ matrix.platform }}
