@@ -47,8 +47,8 @@ jobs:
         shell: bash
         run: echo "::set-output name=tag::${{ github.ref == 'refs/head/main' && 'latest' || github.ref_name }}"
 
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
@@ -58,5 +58,6 @@ jobs:
             yangclivia/step-free-api:latest
             ghcr.io/${{ steps.repo-name-lowercase.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
             ghcr.io/${{ steps.repo-name-lowercase.outputs.repo }}:latest
-          platforms: ${{ matrix.platform }}
-          build-args: TARGETPLATFORM=${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
