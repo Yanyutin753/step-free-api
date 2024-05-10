@@ -35,15 +35,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          tags: |
+            type=raw,value=latest
+            type=ref,event=tag
+
       - name: Convert repository name to lowercase
-        id: repo-name-lowercase
+        id: repo-all-name
         run: echo "::set-output name=repo::$(echo ${{ github.repository }} | awk '{print tolower($0)}')"
-
-      - name: Extract Tag
-        id: tag_name
-        shell: bash
-        run: echo "::set-output name=tag::${{ github.ref == 'refs/head/main' && 'latest' || github.ref_name }}"
-
+        
+      - name: Convert repo name to lowercase
+        id: repo_name
+        run: echo "::set-output name=repo::$(echo "${{ github.repository_name }}" | awk '{print tolower($0)}')"
+        
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -51,10 +58,10 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            yangclivia/step-free-api:${{ steps.tag_name.outputs.tag }}
-            yangclivia/step-free-api:latest
-            ghcr.io/${{ steps.repo-name-lowercase.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
-            ghcr.io/${{ steps.repo-name-lowercase.outputs.repo }}:latest
+            yangclivia/${{ steps.repo_name.outputs.repo }}:${{ steps.tag_name.outputs.tags }}
+            yangclivia/${{ steps.repo_name.outputs.repo }}:latest
+            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:${{ steps.tag_name.outputs.tags }}
+            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
