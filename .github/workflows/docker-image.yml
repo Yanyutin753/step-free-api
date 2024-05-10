@@ -52,7 +52,7 @@ jobs:
           tags: |
             yangclivia/step-free-api:${{ steps.tag_name.outputs.tag }}
             yangclivia/step-free-api:latest
-            ghcr.io/${{ github.repository }}:${{ steps.tag_name.outputs.tag }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:${{ steps.tag_name.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest
           platforms: ${{ matrix.platform }}
           build-args: TARGETPLATFORM=${{ matrix.platform }}
