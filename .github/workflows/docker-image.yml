@@ -48,7 +48,7 @@ jobs:
         id: repo-set
         run: |
           echo "::set-output name=repo_all::$(echo "${{ github.repository }}" | awk '{print tolower($0)}')"
-          echo "::set-output name=repo_name::$(echo "${{ github.repository_name }}" | awk '{print tolower($0)}')"
+          echo "::set-output name=repo_name::$(echo "${{ github.event.repository.name }}" | awk '{print tolower($0)}')"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
