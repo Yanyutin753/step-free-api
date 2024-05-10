@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs_on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,14 +44,12 @@ jobs:
             echo "::set-output name=tag::${{ github.event.inputs.tag }}"
           fi
 
-      - name: Convert repository name to lowercase
-        id: repo-all-name
-        run: echo "::set-output name=repo::$(echo ${{ github.repository }} | awk '{print tolower($0)}')"
-        
-      - name: Convert repo name to lowercase
-        id: repo_name
-        run: echo "::set-output name=repo::$(echo "${{ github.repository_name }}" | awk '{print tolower($0)}')"
-        
+      - name: Set Docker repository names
+        id: repo-set
+        run: |
+          echo "::set-output name=repo_all::$(echo "${{ github.repository }}" | awk '{print tolower($0)}')"
+          echo "::set-output name=repo_name::$(echo "${{ github.repository_name }}" | awk '{print tolower($0)}')"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -59,10 +57,10 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            yangclivia/${{ steps.repo_name.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
-            yangclivia/${{ steps.repo_name.outputs.repo }}:latest
-            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:${{ steps.tag_name.outputs.tag }}
-            ghcr.io/${{ steps.repo-all-name.outputs.repo }}:latest
+            yangclivia/${{ steps.repo-set.outputs.repo_name }}:${{ steps.tag_name.outputs.tag }}
+            yangclivia/${{ steps.repo-set.outputs.repo_name }}:latest
+            ghcr.io/${{ steps.repo-set.outputs.repo_all }}:${{ steps.tag_name.outputs.tag }}
+            ghcr.io/${{ steps.repo-set.outputs.repo_all }}:latest
           platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
