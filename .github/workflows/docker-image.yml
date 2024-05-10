@@ -52,15 +52,22 @@ jobs:
               echo "::set-output name=tag::latest"
           fi
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/${{ github.repository }}
+
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ github.repository }}:${{ steps.tag_name.outputs.tag }}
-            ${{ github.repository }}:latest
+            yangclivia/step-free-api:${{ steps.tag_name.outputs.tag }}
+            yangclivia/step-free-api:latest
             ghcr.io/${{ github.repository }}:${{ steps.tag_name.outputs.tag }}
             ghcr.io/${{ github.repository }}:latest
           platforms: ${{ matrix.platform }}
