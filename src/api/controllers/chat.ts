@@ -210,8 +210,8 @@ async function createCompletion(
     const refFileUrls = extractRefFileUrls(messages);
     const refs = refFileUrls.length
       ? await Promise.all(
-          refFileUrls.map((fileUrl) => uploadFile(fileUrl, refreshToken))
-        )
+        refFileUrls.map((fileUrl) => uploadFile(fileUrl, refreshToken))
+      )
       : [];
 
     // 创建会话
@@ -290,8 +290,8 @@ async function createCompletionStream(
     const refFileUrls = extractRefFileUrls(messages);
     const refs = refFileUrls.length
       ? await Promise.all(
-          refFileUrls.map((fileUrl) => uploadFile(fileUrl, refreshToken))
-        )
+        refFileUrls.map((fileUrl) => uploadFile(fileUrl, refreshToken))
+      )
       : [];
 
     // 创建会话
@@ -570,6 +570,7 @@ function createTransStream(
       })}\n\n`
     );
   const parser = (buffer: Buffer) => {
+    let webSearchCount = 0;
     const result = _.attempt(() => JSON.parse(buffer.toString()));
     if (_.isError(result))
       throw new Error(`Stream response invalid: ${result}`);
@@ -598,9 +599,10 @@ function createTransStream(
         result.pipelineEvent.eventSearch &&
         result.pipelineEvent.eventSearch.results
       ) {
+        webSearchCount += 1;
         const refContent = result.pipelineEvent.eventSearch.results.reduce(
           (str, v) => {
-            return (str += `检索 ${v.title} - ${v.url} ...\n`);
+            return (str += `检索【${webSearchCount}】 [${v.title}](${v.url})\n`);
           },
           ""
         );
